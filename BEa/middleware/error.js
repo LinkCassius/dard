@@ -1,0 +1,17 @@
+const winston = require('winston');
+
+module.exports = function(err, req, res, next){
+  winston.error(err.message, err);
+
+  // error
+  // warn
+  // info
+  // verbose
+  // debug 
+  // silly
+  if(err.name == "ValidationError") {
+
+    res.status(400).send(err);
+  }
+  res.status(500).send("Something went wrong!");
+}
