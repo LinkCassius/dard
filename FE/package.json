@@ -1,0 +1,27 @@
+{
+  "name": "frontend-app",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Deploy-ready React frontend for Azure App Service (Node 20+)",
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=9"
+  },
+  "packageManager": "npm@10",
+  "scripts": {
+    "start": "cross-env-shell \"PORT=${PORT:-3000}\" serve -s build -l $PORT",
+    "build": "react-scripts build",
+    "build:azure": "cross-env CI=false react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1",
+    "serve": "^14.2.0"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3"
+  }
+}
