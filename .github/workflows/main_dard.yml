@@ -9,7 +9,7 @@ on:
       - main
   workflow_dispatch:
 
- jobs:
+jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
@@ -36,7 +36,7 @@ on:
       id-token: write #This is required for requesting the JWT
       contents: read #This is required for actions/checkout
 
-   steps:
+  steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
@@ -58,6 +58,4 @@ on:
            package: BEa  # Change from . to BEa
 
           
-
-
 
