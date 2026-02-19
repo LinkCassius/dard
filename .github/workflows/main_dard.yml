@@ -13,35 +13,48 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read #This is required for actions/checkout
+      contents: read
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Set up Node.js version
-        uses: actions/setup-node@v3
+      - name: Set up Node.js 20.x
+        uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: "20.x"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      # If you have a build step (e.g., TypeScript), keep this.
+      # If not needed, it will no-op if "build" isn't defined.
+      - name: Build (if applicable)
+        run: npm run build --if-present
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: .
+          path: |
+            .
+            !node_modules/**
 
   deploy:
     runs-on: ubuntu-latest
     needs: build
     permissions:
-      id-token: write #This is required for requesting the JWT
-      contents: read #This is required for actions/checkout
+      id-token: write
+      contents: read
 
-  steps:
+    steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: node-app
-      
+          path: .
+
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -49,13 +62,10 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_16C0EA20DE5440739FF61F536CD2A34F }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_E6E8C276F010475A8F0C807C82D8CAEB }}
 
-       - name: 'Deploy to Azure Web App'
-         id: deploy-to-webapp
-         uses: azure/webapps-deploy@v3
-         with:
-           app-name: 'dard'
-           slot-name: 'Production'
-           package: BEa  # Change from . to BEa
-
-          
-
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: "dard"
+          slot-name: "Production"
+          package: .
