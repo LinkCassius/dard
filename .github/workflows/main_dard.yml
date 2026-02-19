@@ -49,11 +49,12 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_16C0EA20DE5440739FF61F536CD2A34F }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_E6E8C276F010475A8F0C807C82D8CAEB }}
 
-      - name: 'Deploy to Azure Web App'
-        id: deploy-to-webapp
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: 'dard'
-          slot-name: 'Production'
-          package: .
+       - name: 'Deploy to Azure Web App'
+         id: deploy-to-webapp
+         uses: azure/webapps-deploy@v3
+         with:
+           app-name: 'dard'
+           slot-name: 'Production'
+           package: BEa  # Change from . to BEa
+
           
