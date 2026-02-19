@@ -1,7 +1,4 @@
-# Azure Web App Deployment for backend inside /BEa folder
-# NOTE: No lockfile found at repo root, so we disable dependency caching to avoid setup-node lockfile errors.
-
-name: Build and deploy Node.js app to Azure Web App - dard
+name: Build and deploy React frontend (FE) to Azure Web App
 
 on:
   push:
@@ -19,25 +16,25 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Node.js 20.x
+      - name: Setup Node 20.x
         uses: actions/setup-node@v4
         with:
           node-version: "20.x"
-          # cache intentionally omitted because GitHub Actions requires a lockfile to enable npm caching
+          # cache omitted because it requires a lockfile; add back with cache-dependency-path if you commit FE/package-lock.json
 
       - name: Install dependencies
         run: npm install
-        working-directory: ./BEa
+        working-directory: ./FE
 
-      - name: Build (if applicable)
-        run: npm run build --if-present
-        working-directory: ./BEa
+      - name: Build
+        run: npm run build:azure
+        working-directory: ./FE
 
       - name: Upload artifact for deployment
         uses: actions/upload-artifact@v4
         with:
-          name: node-app
-          path: ./BEa
+          name: fe-app
+          path: ./FE
 
   deploy:
     runs-on: ubuntu-latest
@@ -50,20 +47,19 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: node-app
-          path: ./BEa
+          name: fe-app
+          path: ./FE
 
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_3F739F318066475B96AE73FA7FAEF834 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_16C0EA20DE5440739FF61F536CD2A34F }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_E6E8C276F010475A8F0C807C82D8CAEB }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}
 
       - name: Deploy to Azure Web App
-        id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: "dard"
-          slot-name: "Production"
-          package: ./BEa
+          app-name: ${{ secrets.AZUREAPPSERVICE_APPNAME }}
+          slot-name: Production
+          package: ./FE
