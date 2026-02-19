@@ -1,4 +1,5 @@
 # Azure Web App Deployment for backend inside /BEa folder
+# NOTE: No lockfile found at repo root, so we disable dependency caching to avoid setup-node lockfile errors.
 
 name: Build and deploy Node.js app to Azure Web App - dard
 
@@ -22,7 +23,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20.x"
-          cache: "npm"
+          # cache intentionally omitted because GitHub Actions requires a lockfile to enable npm caching
 
       - name: Install dependencies
         run: npm install
